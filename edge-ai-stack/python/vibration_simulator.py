@@ -46,7 +46,7 @@ def generate_vibration(fault: bool = False) -> float:
 
 
 def simulate_stream() -> Generator[float, None, None]:
-    """Yield an infinite stream of vibration readings at 1second intervals.
+    """Yield an infinite stream of vibration readings at 1-second intervals.
 
     Faults are randomly injected with approximately 15% probability.
     """
@@ -54,3 +54,6 @@ def simulate_stream() -> Generator[float, None, None]:
         is_fault = random.random() < 0.15
         yield generate_vibration(fault=is_fault)
         time.sleep(1)
+
+
+
