@@ -4,7 +4,7 @@ import signal
 import time
 
 from anomaly_detector import AnomalyDetector
-from mqtt_client import create_client, publish_alert, publish_data
+from mqtt_client import create_client, publish_alert, publish_data, publish_prediction
 from vibration_simulator import simulate_stream
 
 RUNNING = True
@@ -60,6 +60,7 @@ def main() -> None:
         # Build and publish payload
         payload = build_payload(vibration, status, confidence)
         publish_data(client, payload)
+        publish_prediction(client, status, vibration, confidence)
 
         # Publish alert on FAULT
         if status == "FAULT":

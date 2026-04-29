@@ -276,7 +276,22 @@
     "pretty": false,
     "x": 400,
     "y": 340,
-    "wires": [["extract_confidence", "format_prediction_html"]]
+    "wires": [["extract_confidence", "format_prediction_html", "format_live_status_html"]]
+  },
+  {
+    "id": "format_live_status_html",
+    "type": "function",
+    "z": "f1a2b3c4d5e6f701",
+    "name": "Format Live Status",
+    "func": "const status = String(msg.payload.status || 'NORMAL');\nconst confidence = Number(msg.payload.ai_confidence || 0).toFixed(2);\nif (status === 'FAULT') {\n    msg.payload = '<span style=\"color:#ca3838;font-weight:bold;\">FAULT DETECTED (AI Confidence: ' + confidence + ')</span>';\n} else {\n    msg.payload = '<span style=\"color:#00b500;font-weight:bold;\">NORMAL (AI Confidence: ' + confidence + ')</span>';\n}\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 630,
+    "y": 270,
+    "wires": [["ui_text_status"]]
   },
   {
     "id": "extract_confidence",
