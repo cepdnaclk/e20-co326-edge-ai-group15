@@ -70,6 +70,7 @@ def publish_alert(
     status: str,
     vibration_value: float,
     confidence: float = 0.0,
+    motor_state: str = "ON",
 ) -> None:
     """Publish FAULT/NORMAL alert payload to the alert topic as JSON."""
     payload = {
@@ -78,6 +79,7 @@ def publish_alert(
         "vibration": round(vibration_value, 4),
         "unit": "g",
         "status": status,
+        "motor_state": motor_state,
         "ai_confidence": confidence,
         "detection_method": "isolation_forest",
     }
@@ -92,6 +94,7 @@ def publish_prediction(
     status: str,
     vibration_value: float,
     confidence: float,
+    motor_state: str = "ON",
 ) -> None:
     """Publish AI prediction result to the prediction topic as JSON."""
     payload = {
@@ -99,6 +102,7 @@ def publish_prediction(
         "sensor_id": "motor_01",
         "vibration": round(vibration_value, 4),
         "status": status,
+        "motor_state": motor_state,
         "ai_confidence": confidence,
         "detection_method": "isolation_forest",
     }
