@@ -45,23 +45,4 @@ class AnomalyDetector:
             return "FAULT"
         return "NORMAL"
 
-    def get_stats(self) -> dict:
-        """Return rolling statistical context for observability/debugging."""
-        stats = self._compute_stats()
-        return {
-            "mean": stats["mean"],
-            "std": stats["std"],
-            "window": list(self.window),
-            "threshold": self.threshold,
-        }
-
-    def _compute_stats(self) -> dict:
-        """Compute mean/std for current rolling window (before latest append)."""
-        if not self.window:
-            return {"mean": 0.0, "std": 0.0}
-
-        values = list(self.window)
-        mean = sum(values) / len(values)
-        variance = sum((x - mean) ** 2 for x in values) / len(values)
-        std = math.sqrt(variance)
-        return {"mean": round(mean, 6), "std": round(std, 6)}
+   
