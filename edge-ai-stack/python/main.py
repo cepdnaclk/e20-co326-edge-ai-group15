@@ -36,30 +36,48 @@ def build_payload(
 
 
 def main() -> None:
-    """Run the vibration simulation and publish results until shutdown."""
+    """Run the vibration monitoring pipeline with AI anomaly detection."""
     signal.signal(signal.SIGINT, handle_shutdown)
     signal.signal(signal.SIGTERM, handle_shutdown)
 
+    # Initialize AI detector
+    print("Initializing AI anomaly detector...")
     detector = AnomalyDetector()
+
+    # Connect MQTT
+    print("Connecting to MQTT broker...")
     client = create_client()
-    stream = simulate_stream()
 
-    try:
-        while RUNNING:
-            vibration = next(stream)
-            status = detector.detect(vibration)
-            payload = build_payload(vibration, status)
+    print("Starting vibration monitoring with AI detection...\n")
 
-            publish_data(client, payload)
-            publish_alert(client, status, vibration)
-            print(
-                f"Published vibration={payload['vibration']}g "
-                f"status={status} threshold={detector.threshold}"
-            )
-    finally:
-        client.loop_stop()
-        client.disconnect()
-        print("MQTT client disconnected.")
+    for vibration, ground_truth in simulate_stream():
+        if not RUNNING:
+            break
+
+        # AI-based anomaly detection
+        status, confidence = detector.predict(vibration)
+
+        # Build and publish payload
+        payload = build_payload(vibration, status, confidence)
+        publish_data(client, payload)
+
+        # Publish alert on FAULT
+        if status == "FAULT":
+            publish_alert(client, status, vibration, confidence)
+
+        # Log with ground truth comparison
+        gt_label = "FAULT" if ground_truth else "NORMAL"
+        match_marker = "+" if (status == gt_label) else "x"
+        print(
+            f"[{match_marker}] Vibration: {vibration:.4f}g | "
+            f"AI: {status} (conf: {confidence:.2f}) | "
+            f"Ground Truth: {gt_label}"
+        )
+
+    # Cleanup
+    client.loop_stop()
+    client.disconnect()
+    print("Application stopped.")
 
 
 if __name__ == "__main__":
