@@ -9,3 +9,29 @@ services:
       - "9001:9001"
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  python-app:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: vibration-python-app
+    depends_on:
+      - mosquitto
+    environment:
+      - BROKER_HOST=mosquitto
+      - BROKER_PORT=1883
+      - GROUP_ID=group01
+    restart: unless-stopped
+
+  nodered:
+    build:
+      context: ./node-red
+      dockerfile: Dockerfile
+    container_name: nodered
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red:/data
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
