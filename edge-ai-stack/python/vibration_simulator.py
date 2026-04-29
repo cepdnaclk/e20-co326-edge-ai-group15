@@ -3,7 +3,7 @@
 import math
 import random
 import time
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 
 
 def generate_vibration(fault: bool = False) -> float:
@@ -45,7 +45,9 @@ def generate_vibration(fault: bool = False) -> float:
     return round(max(0.0, reading), 4)
 
 
-def simulate_stream() -> Generator[tuple[float, bool], None, None]:
+def simulate_stream(
+    motor_running_fn: Callable[[], bool] | None = None,
+) -> Generator[tuple[float, bool], None, None]:
     """Yield an infinite stream of (vibration, is_fault) tuples at 1-second intervals.
 
     Each tuple contains the vibration reading and a boolean indicating whether
@@ -54,6 +56,11 @@ def simulate_stream() -> Generator[tuple[float, bool], None, None]:
     Faults are randomly injected with approximately 15% probability.
     """
     while True:
+        if motor_running_fn is not None and not motor_running_fn():
+            yield (0.0, False)
+            time.sleep(1)
+            continue
+
         is_fault = random.random() < 0.15
         vibration = generate_vibration(fault=is_fault)
         yield (vibration, is_fault)

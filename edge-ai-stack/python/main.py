@@ -21,6 +21,7 @@ def build_payload(
     vibration: float,
     status: str,
     confidence: float,
+    motor_state: str,
     detection_method: str = "isolation_forest",
 ) -> dict:
     """Construct a normalized sensor payload following project schema."""
@@ -30,6 +31,7 @@ def build_payload(
         "vibration": round(vibration, 4),
         "unit": "g",
         "status": status,
+        "motor_state": motor_state,
         "ai_confidence": confidence,
         "detection_method": detection_method,
     }
@@ -49,30 +51,40 @@ def main() -> None:
     client = create_client()
 
     print("Starting vibration monitoring with AI detection...\n")
+    motor_running = True
 
-    for vibration, ground_truth in simulate_stream():
+    for vibration, ground_truth in simulate_stream(lambda: motor_running):
         if not RUNNING:
             break
 
-        # AI-based anomaly detection
-        status, confidence = detector.predict(vibration)
+        if motor_running:
+            # AI-based anomaly detection while motor is running
+            status, confidence = detector.predict(vibration)
+            if status == "FAULT":
+                motor_running = False
+        else:
+            status, confidence = ("MOTOR_OFF", 0.0)
 
         # Build and publish payload
-        payload = build_payload(vibration, status, confidence)
+        motor_state = "ON" if motor_running else "OFF"
+        payload = build_payload(vibration, status, confidence, motor_state)
         publish_data(client, payload)
-        publish_prediction(client, status, vibration, confidence)
+        publish_prediction(client, status, vibration, confidence, motor_state)
 
         # Publish alert on FAULT
         if status == "FAULT":
-            publish_alert(client, status, vibration, confidence)
+            publish_alert(client, status, vibration, confidence, motor_state)
 
         # Log with ground truth comparison
         gt_label = "FAULT" if ground_truth else "NORMAL"
         match_marker = "+" if (status == gt_label) else "x"
+        if status == "MOTOR_OFF":
+            gt_label = "MOTOR_OFF"
+            match_marker = "+"
         print(
             f"[{match_marker}] Vibration: {vibration:.4f}g | "
             f"AI: {status} (conf: {confidence:.2f}) | "
-            f"Ground Truth: {gt_label}"
+            f"Motor: {motor_state} | Ground Truth: {gt_label}"
         )
 
     # Cleanup
