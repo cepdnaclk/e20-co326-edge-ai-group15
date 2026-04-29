@@ -44,7 +44,7 @@ class AnomalyDetector:
         if threshold_fault or statistical_fault:
             return "FAULT"
         return "NORMAL"
-
+    
     def get_stats(self) -> dict:
         """Return rolling statistical context for observability/debugging."""
         stats = self._compute_stats()
@@ -65,3 +65,5 @@ class AnomalyDetector:
         variance = sum((x - mean) ** 2 for x in values) / len(values)
         std = math.sqrt(variance)
         return {"mean": round(mean, 6), "std": round(std, 6)}
+
+   
