@@ -11,6 +11,7 @@ BROKER_PORT = int(os.environ.get("BROKER_PORT", "1883"))
 GROUP_ID = os.environ.get("GROUP_ID", "group01")
 DATA_TOPIC = f"sensors/{GROUP_ID}/motor-vibration/data"
 ALERT_TOPIC = f"alerts/{GROUP_ID}/motor-vibration/status"
+PREDICTION_TOPIC = f"ai/{GROUP_ID}/motor-vibration/prediction"
 
 
 def _on_connect(client: mqtt.Client, userdata, flags, rc):
@@ -64,7 +65,12 @@ def publish_data(client: mqtt.Client, payload: dict) -> None:
         print(f"Failed to publish data message (rc={result.rc})")
 
 
-def publish_alert(client: mqtt.Client, status: str, vibration_value: float) -> None:
+def publish_alert(
+    client: mqtt.Client,
+    status: str,
+    vibration_value: float,
+    confidence: float = 0.0,
+) -> None:
     """Publish FAULT/NORMAL alert payload to the alert topic as JSON."""
     payload = {
         "timestamp": int(time.time()),
@@ -72,8 +78,31 @@ def publish_alert(client: mqtt.Client, status: str, vibration_value: float) -> N
         "vibration": round(vibration_value, 4),
         "unit": "g",
         "status": status,
+        "ai_confidence": confidence,
+        "detection_method": "isolation_forest",
     }
     message = json.dumps(payload)
     result = client.publish(ALERT_TOPIC, message)
     if result.rc != mqtt.MQTT_ERR_SUCCESS:
         print(f"Failed to publish alert message (rc={result.rc})")
+
+
+def publish_prediction(
+    client: mqtt.Client,
+    status: str,
+    vibration_value: float,
+    confidence: float,
+) -> None:
+    """Publish AI prediction result to the prediction topic as JSON."""
+    payload = {
+        "timestamp": int(time.time()),
+        "sensor_id": "motor_01",
+        "vibration": round(vibration_value, 4),
+        "status": status,
+        "ai_confidence": confidence,
+        "detection_method": "isolation_forest",
+    }
+    message = json.dumps(payload)
+    result = client.publish(PREDICTION_TOPIC, message)
+    if result.rc != mqtt.MQTT_ERR_SUCCESS:
+        print(f"Failed to publish prediction message (rc={result.rc})")
