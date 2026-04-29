@@ -1,10 +1,10 @@
 # Motor Vibration Monitoring — Edge AI IoT Project
 
 ## Group Members
-E/20/248 - Mapagedara T.L.B.
-E/20/453 - Yogesh R.J.
-E/20/158 - Jananga T.G.C.
-E/20/300 - Prasadinie H.A.M.T.
+- /20/248 - Mapagedara T.L.B.
+- E/20/453 - Yogesh R.J.
+- E/20/158 - Jananga T.G.C.
+- E/20/300 - Prasadinie H.A.M.T.
 
 ## Project Description
 This project implements a complete end-to-end Edge AI and Industrial IoT workflow for motor vibration monitoring. A Python application simulates motor vibration signals, applies real-time anomaly detection, and publishes structured telemetry and alerts to MQTT topics. Node-RED subscribes to those topics and presents a live dashboard with trend charts, intensity gauge visualization, and clear fault status messaging.
@@ -41,12 +41,4 @@ Sensor Simulator → Anomaly Detector → MQTT Publisher → Broker → Node-RED
   - Gauge changes under fault spikes
   - Status panel showing `⚠ FAULT DETECTED`
 
-## Challenges
-- Balancing realistic simulation behavior while keeping runtime deterministic enough for demos.
-- Designing robust fault logic using both static thresholds and adaptive rolling statistics.
-- Ensuring seamless operation across local execution and containerized deployment.
 
-## Future Improvements
-- TensorFlow Lite model
-- Real ESP32 sensor
-- Historical data logging
