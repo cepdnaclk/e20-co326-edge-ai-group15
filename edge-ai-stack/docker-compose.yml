@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mosquitto:
     image: eclipse-mosquitto:2
@@ -9,6 +7,12 @@ services:
       - "9001:9001"
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "127.0.0.1", "-p", "1883", "-t", "$$SYS/#", "-C", "1", "-W", "3"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   python-app:
     build:
@@ -16,11 +20,13 @@ services:
       dockerfile: Dockerfile
     container_name: vibration-python-app
     depends_on:
-      - mosquitto
+      mosquitto:
+        condition: service_healthy
     environment:
       - BROKER_HOST=mosquitto
       - BROKER_PORT=1883
       - GROUP_ID=group01
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
 
   nodered:
@@ -33,5 +39,6 @@ services:
     volumes:
       - ./node-red:/data
     depends_on:
-      - mosquitto
+      mosquitto:
+        condition: service_healthy
     restart: unless-stopped

@@ -3,6 +3,8 @@
 import signal
 import time
 
+from anomaly_detector import AnomalyDetector
+from mqtt_client import create_client, publish_alert, publish_data
 from vibration_simulator import simulate_stream
 
 RUNNING = True
@@ -24,4 +26,35 @@ def build_payload(vibration: float, status: str) -> dict:
         "unit": "g",
         "status": status,
     }
+
+
+def main() -> None:
+    """Run the vibration simulation and publish results until shutdown."""
+    signal.signal(signal.SIGINT, handle_shutdown)
+    signal.signal(signal.SIGTERM, handle_shutdown)
+
+    detector = AnomalyDetector()
+    client = create_client()
+    stream = simulate_stream()
+
+    try:
+        while RUNNING:
+            vibration = next(stream)
+            status = detector.detect(vibration)
+            payload = build_payload(vibration, status)
+
+            publish_data(client, payload)
+            publish_alert(client, status, vibration)
+            print(
+                f"Published vibration={payload['vibration']}g "
+                f"status={status} threshold={detector.threshold}"
+            )
+    finally:
+        client.loop_stop()
+        client.disconnect()
+        print("MQTT client disconnected.")
+
+
+if __name__ == "__main__":
+    main()
 
