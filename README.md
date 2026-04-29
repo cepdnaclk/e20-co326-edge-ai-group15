@@ -1,7 +1,7 @@
 # Motor Vibration Monitoring — Edge AI IoT Project
 
 ## Group Members
-- /20/248 - Mapagedara T.L.B.
+- E/20/248 - Mapagedara T.L.B.
 - E/20/453 - Yogesh R.J.
 - E/20/158 - Jananga T.G.C.
 - E/20/300 - Prasadinie H.A.M.T.
