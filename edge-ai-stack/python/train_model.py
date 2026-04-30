@@ -12,8 +12,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, make_scorer, f1_score
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 
 # ---------------------------------------------------------------------------
@@ -79,14 +79,37 @@ def train(
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    # ---- Train Isolation Forest ---------------------------------------------
-    model = IsolationForest(
-        n_estimators=N_ESTIMATORS,
-        contamination=CONTAMINATION,
-        random_state=RANDOM_STATE,
-        n_jobs=-1,
+    # ---- Hyperparameter Tuning (Grid Search) --------------------------------
+    print("Starting Hyperparameter Tuning (GridSearchCV)...")
+    
+    def isolation_forest_scorer(y_true, y_pred_raw):
+        # Map: -1 (anomaly) -> 1 (FAULT), 1 (inlier) -> 0 (NORMAL)
+        y_pred_mapped = np.where(y_pred_raw == -1, 1, 0)
+        return f1_score(y_true, y_pred_mapped, pos_label=1)
+
+    custom_scorer = make_scorer(isolation_forest_scorer)
+
+    param_grid = {
+        'n_estimators': [100, 150, 200],
+        'max_samples': ['auto', 256, 512],
+        'contamination': [0.10, 0.15, 0.20]
+    }
+
+    grid_search = GridSearchCV(
+        estimator=IsolationForest(random_state=RANDOM_STATE),
+        param_grid=param_grid,
+        scoring=custom_scorer,
+        cv=3,
+        n_jobs=-1
     )
-    model.fit(X_train_scaled)
+
+    grid_search.fit(X_train_scaled, y_train)
+
+    print(f"Best Parameters: {grid_search.best_params_}")
+    print(f"Best Cross-Validation F1 Score: {grid_search.best_score_:.4f}\n")
+
+    # Use the best estimator found
+    model = grid_search.best_estimator_
 
     # ---- Evaluate -----------------------------------------------------------
     # Isolation Forest returns  1 → inlier,  -1 → outlier
