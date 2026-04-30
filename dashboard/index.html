@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motor Vibration Monitor</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── TOP BAR ─────────────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__icon">⬡</span>
+      <div>
+        <span class="topbar__title">Motor Vibration Monitor</span>
+        <span class="topbar__sub">Isolation Forest · Real-time Anomaly Detection</span>
+      </div>
+    </div>
+    <div class="topbar__meta">
+      <div class="conn-badge" id="connBadge">
+        <span class="conn-badge__dot"></span>
+        <span class="conn-badge__label" id="connLabel">Connecting…</span>
+      </div>
+      <div class="topbar__clock" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <!-- ── MAIN GRID ────────────────────────────────────────────────── -->
+  <main class="grid">
+
+    <!-- ROW 1 — KPI CARDS -->
+    <section class="kpi-row">
+
+      <div class="kpi" id="kpiVibration">
+        <span class="kpi__label">Vibration</span>
+        <span class="kpi__value" id="kpiVibVal">—</span>
+        <span class="kpi__unit">g</span>
+        <span class="kpi__sub">Current reading</span>
+      </div>
+
+      <div class="kpi" id="kpiStatus">
+        <span class="kpi__label">System Status</span>
+        <span class="kpi__value" id="kpiStatusVal">—</span>
+        <span class="kpi__unit"></span>
+        <span class="kpi__sub" id="kpiStatusSub">Awaiting data</span>
+      </div>
+
+      <div class="kpi" id="kpiConfidence">
+        <span class="kpi__label">AI Confidence</span>
+        <span class="kpi__value" id="kpiConfVal">—</span>
+        <span class="kpi__unit">%</span>
+        <span class="kpi__sub">Isolation Forest score</span>
+      </div>
+
+      <div class="kpi" id="kpiMotor">
+        <span class="kpi__label">Motor State</span>
+        <span class="kpi__value" id="kpiMotorVal">—</span>
+        <span class="kpi__unit"></span>
+        <span class="kpi__sub" id="kpiMotorSub">Relay status</span>
+      </div>
+
+      <div class="kpi" id="kpiFaults">
+        <span class="kpi__label">Fault Events</span>
+        <span class="kpi__value" id="kpiFaultVal">0</span>
+        <span class="kpi__unit"></span>
+        <span class="kpi__sub">This session</span>
+      </div>
+
+      <div class="kpi" id="kpiUptime">
+        <span class="kpi__label">Session Uptime</span>
+        <span class="kpi__value" id="kpiUptimeVal">00:00</span>
+        <span class="kpi__unit"></span>
+        <span class="kpi__sub">hh:mm:ss</span>
+      </div>
+
+    </section>
+
+    <!-- ROW 2 — CHART + GAUGE -->
+    <section class="panel panel--chart">
+      <div class="panel__head">
+        <h2 class="panel__title">Vibration Signal</h2>
+        <div class="panel__controls">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggleFaultLine" checked />
+            Fault threshold
+          </label>
+          <button class="btn-ghost" id="clearChart">Clear</button>
+        </div>
+      </div>
+      <div class="panel__body">
+        <canvas id="vibrationChart"></canvas>
+      </div>
+    </section>
+
+    <section class="panel panel--gauge">
+      <div class="panel__head">
+        <h2 class="panel__title">Intensity</h2>
+      </div>
+      <div class="panel__body panel__body--center">
+        <canvas id="gaugeChart"></canvas>
+        <div class="gauge-reading">
+          <span id="gaugeValue">0.0000</span>
+          <span class="gauge-unit">g</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROW 3 — ROLLING STATS + CONFIDENCE HISTORY + LOG -->
+    <section class="panel panel--stats">
+      <div class="panel__head">
+        <h2 class="panel__title">Rolling Statistics <span class="badge">Window · 10</span></h2>
+      </div>
+      <div class="panel__body">
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-item__label">Mean</span>
+            <span class="stat-item__value" id="statMean">—</span>
+            <span class="stat-item__unit">g</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__label">Std Dev</span>
+            <span class="stat-item__value" id="statStd">—</span>
+            <span class="stat-item__unit">g</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__label">Min</span>
+            <span class="stat-item__value" id="statMin">—</span>
+            <span class="stat-item__unit">g</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__label">Max</span>
+            <span class="stat-item__value" id="statMax">—</span>
+            <span class="stat-item__unit">g</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__label">Delta</span>
+            <span class="stat-item__value" id="statDelta">—</span>
+            <span class="stat-item__unit">g</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__label">Messages</span>
+            <span class="stat-item__value" id="statMsgCount">0</span>
+            <span class="stat-item__unit"></span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="sub-title">Detection Method</h3>
+        <div class="method-badge" id="methodBadge">isolation_forest</div>
+
+        <div class="divider"></div>
+
+        <h3 class="sub-title">Sensor</h3>
+        <div class="sensor-info">
+          <span class="sensor-info__key">ID</span>
+          <span class="sensor-info__val" id="sensorId">—</span>
+          <span class="sensor-info__key">Unit</span>
+          <span class="sensor-info__val" id="sensorUnit">—</span>
+          <span class="sensor-info__key">Last seen</span>
+          <span class="sensor-info__val" id="sensorLastSeen">—</span>
+          <span class="sensor-info__key">Topic</span>
+          <span class="sensor-info__val" id="sensorTopic">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel--confidence">
+      <div class="panel__head">
+        <h2 class="panel__title">AI Confidence History</h2>
+      </div>
+      <div class="panel__body">
+        <canvas id="confidenceChart"></canvas>
+      </div>
+    </section>
+
+    <section class="panel panel--log">
+      <div class="panel__head">
+        <h2 class="panel__title">Event Log</h2>
+        <button class="btn-ghost" id="clearLog">Clear</button>
+      </div>
+      <div class="panel__body panel__body--log" id="eventLog">
+        <div class="log-placeholder">Waiting for MQTT messages…</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── FAULT ALERT OVERLAY ──────────────────────────────────────── -->
+  <div class="fault-overlay" id="faultOverlay">
+    <div class="fault-overlay__box">
+      <div class="fault-overlay__icon">⚠</div>
+      <div class="fault-overlay__title">FAULT DETECTED</div>
+      <div class="fault-overlay__detail" id="faultDetail">—</div>
+      <button class="fault-overlay__dismiss" id="dismissFault">Acknowledge</button>
+    </div>
+  </div>
+
+  <!-- ── CONNECTION CONFIG ────────────────────────────────────────── -->
+  <div class="config-panel" id="configPanel">
+    <div class="config-panel__inner">
+      <h3 class="config-panel__title">MQTT Connection</h3>
+      <label class="field-label">Broker WebSocket URL
+        <input class="field-input" id="cfgBroker" type="text" value="ws://localhost:9001" />
+      </label>
+      <label class="field-label">Group ID
+        <input class="field-input" id="cfgGroup" type="text" value="group01" />
+      </label>
+      <button class="btn-primary" id="cfgConnect">Connect</button>
+    </div>
+  </div>
+  <button class="fab-config" id="openConfig" title="MQTT Settings">⚙</button>
+
+  <script src="js/config.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/mqtt.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
