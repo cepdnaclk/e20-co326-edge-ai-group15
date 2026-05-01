@@ -118,6 +118,17 @@ class TestAnomalyDetectorWarmup:
         assert status in ("NORMAL", "FAULT")
         # Confidence should now be > 0 (model is active)
 
+    def test_reset_clears_runtime_state(self, detector):
+        detector.predict(0.14)
+        detector.predict(0.16)
+        assert len(detector.window) >= 1
+
+        detector.reset()
+
+        assert len(detector.window) == 0
+        assert detector.previous == 0.0
+        assert detector.ready is False
+
 
 class TestAnomalyDetectorAccuracy:
     """Tests to verify the model makes sensible predictions on known patterns."""

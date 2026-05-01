@@ -2,9 +2,16 @@
 
 import signal
 import time
+from threading import Lock
 
 from anomaly_detector import AnomalyDetector
-from mqtt_client import create_client, publish_alert, publish_data, publish_prediction
+from mqtt_client import (
+    create_client,
+    publish_alert,
+    publish_data,
+    publish_prediction,
+    subscribe_control,
+)
 from vibration_simulator import simulate_stream
 
 RUNNING = True
@@ -49,31 +56,54 @@ def main() -> None:
     # Connect MQTT
     print("Connecting to MQTT broker...")
     client = create_client()
+    state_lock = Lock()
+    motor_state = {"running": True}
+
+    def handle_motor_command(command: dict) -> None:
+        requested = str(command.get("motor_state", "")).strip().upper()
+        if requested not in {"ON", "OFF"}:
+            print(f"Ignoring unsupported motor command: {command}")
+            return
+
+        with state_lock:
+            if requested == "ON":
+                detector.reset()
+                motor_state["running"] = True
+                print("Motor control command received: ON")
+            else:
+                motor_state["running"] = False
+                print("Motor control command received: OFF")
+
+    subscribe_control(client, handle_motor_command)
 
     print("Starting vibration monitoring with AI detection...\n")
-    motor_running = True
 
-    for vibration, ground_truth in simulate_stream(lambda: motor_running):
+    for vibration, ground_truth in simulate_stream(lambda: motor_state["running"]):
         if not RUNNING:
             break
 
-        if motor_running:
+        with state_lock:
+            running = motor_state["running"]
+
+        if running:
             # AI-based anomaly detection while motor is running
             status, confidence = detector.predict(vibration)
             if status == "FAULT":
-                motor_running = False
+                with state_lock:
+                    motor_state["running"] = False
+                running = False
         else:
             status, confidence = ("MOTOR_OFF", 0.0)
 
         # Build and publish payload
-        motor_state = "ON" if motor_running else "OFF"
-        payload = build_payload(vibration, status, confidence, motor_state)
+        motor_label = "ON" if running else "OFF"
+        payload = build_payload(vibration, status, confidence, motor_label)
         publish_data(client, payload)
-        publish_prediction(client, status, vibration, confidence, motor_state)
+        publish_prediction(client, status, vibration, confidence, motor_label)
 
         # Publish alert on FAULT
         if status == "FAULT":
-            publish_alert(client, status, vibration, confidence, motor_state)
+            publish_alert(client, status, vibration, confidence, motor_label)
 
         # Log with ground truth comparison
         gt_label = "FAULT" if ground_truth else "NORMAL"
@@ -84,7 +114,7 @@ def main() -> None:
         print(
             f"[{match_marker}] Vibration: {vibration:.4f}g | "
             f"AI: {status} (conf: {confidence:.2f}) | "
-            f"Motor: {motor_state} | Ground Truth: {gt_label}"
+            f"Motor: {motor_label} | Ground Truth: {gt_label}"
         )
 
     # Cleanup

@@ -12,6 +12,7 @@ GROUP_ID = os.environ.get("GROUP_ID", "group01")
 DATA_TOPIC = f"sensors/{GROUP_ID}/motor-vibration/data"
 ALERT_TOPIC = f"alerts/{GROUP_ID}/motor-vibration/status"
 PREDICTION_TOPIC = f"ai/{GROUP_ID}/motor-vibration/prediction"
+CONTROL_TOPIC = f"control/{GROUP_ID}/motor-vibration/command"
 
 
 def _on_connect(client: mqtt.Client, userdata, flags, rc):
@@ -55,6 +56,26 @@ def create_client() -> mqtt.Client:
     raise ConnectionError(
         f"Unable to connect to MQTT broker at {BROKER_HOST}:{BROKER_PORT}"
     )
+
+
+def subscribe_control(
+    client: mqtt.Client,
+    command_handler,
+) -> None:
+    """Subscribe to dashboard control commands and dispatch parsed JSON payloads."""
+
+    def _on_control_message(client, userdata, msg):
+        try:
+            payload = json.loads(msg.payload.decode("utf-8"))
+        except Exception as exc:
+            print(f"Ignoring invalid control message: {exc}")
+            return
+
+        command_handler(payload)
+
+    client.subscribe(CONTROL_TOPIC, qos=0)
+    client.message_callback_add(CONTROL_TOPIC, _on_control_message)
+    print(f"Subscribed to motor control topic: {CONTROL_TOPIC}")
 
 
 def publish_data(client: mqtt.Client, payload: dict) -> None:

@@ -18,26 +18,30 @@ class TestBuildPayload:
     """Tests for the MQTT payload builder in main.py."""
 
     def test_payload_structure(self):
-        payload = build_payload(0.1234, "NORMAL", 0.95)
+        payload = build_payload(0.1234, "NORMAL", 0.95, "ON")
         assert "timestamp" in payload
         assert payload["sensor_id"] == "motor_01"
         assert payload["vibration"] == 0.1234
         assert payload["unit"] == "g"
         assert payload["status"] == "NORMAL"
+        assert payload["motor_state"] == "ON"
         assert payload["ai_confidence"] == 0.95
         assert payload["detection_method"] == "isolation_forest"
 
     def test_fault_payload(self):
-        payload = build_payload(1.5, "FAULT", 0.87)
+        payload = build_payload(1.5, "FAULT", 0.87, "OFF")
         assert payload["status"] == "FAULT"
+        assert payload["motor_state"] == "OFF"
         assert payload["ai_confidence"] == 0.87
 
     def test_vibration_rounding(self):
-        payload = build_payload(0.123456789, "NORMAL", 0.5)
+        payload = build_payload(0.123456789, "NORMAL", 0.5, "ON")
         assert payload["vibration"] == 0.1235  # rounded to 4 dp
 
     def test_custom_detection_method(self):
-        payload = build_payload(0.1, "NORMAL", 0.9, detection_method="custom_model")
+        payload = build_payload(
+            0.1, "NORMAL", 0.9, "ON", detection_method="custom_model"
+        )
         assert payload["detection_method"] == "custom_model"
 
 
@@ -177,7 +181,7 @@ class TestEndToEndPipeline:
             detector.predict(0.12)
 
         status, confidence = detector.predict(0.15)
-        payload = build_payload(0.15, status, confidence)
+        payload = build_payload(0.15, status, confidence, "ON")
 
         assert payload["status"] in ("NORMAL", "FAULT")
         assert 0.0 <= payload["ai_confidence"] <= 1.0

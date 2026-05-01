@@ -75,6 +75,12 @@ class AnomalyDetector:
     # Public API
     # ------------------------------------------------------------------
 
+    def reset(self) -> None:
+        """Clear runtime state so a restarted motor begins with a fresh window."""
+        self.window.clear()
+        self.previous = 0.0
+        self.ready = False
+
     def predict(self, vibration: float) -> tuple[str, float]:
         """Classify a single vibration reading.
 
