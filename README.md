@@ -68,7 +68,7 @@ The system is composed of three Docker services:
 ## Project Structure
 
 ```
-project/
+edge-ai-stack/
 │
 ├── python/                        # Python application
 │   ├── main.py                    # Main runtime entry point
@@ -102,6 +102,9 @@ project/
 │
 ├── mosquitto/
 │   └── mosquitto.conf             # MQTT broker configuration
+│
+├── docs/
+│   └── group15_report.pdf         # Final report
 │
 └── docker-compose.yml             # Full stack orchestration
 ```
@@ -334,7 +337,7 @@ Published every cycle. AI-focused payload without units metadata.
 
 Access at **http://localhost:1880/ui** after starting the stack.
 
-The dashboard has four panels:
+The dashboard has five panels:
 
 | Panel | Widgets | Description |
 |---|---|---|
@@ -342,6 +345,7 @@ The dashboard has four panels:
 | **Fault Status** | Text indicator | Live status with AI confidence |
 | **AI Prediction** | Confidence gauge + Text | Isolation Forest output |
 | **Motor Status** | Text indicator | Motor ON/OFF state |
+| **Recent History** | Event timeline | Latest FAULT, MOTOR OFF, and recovery events |
 
 The Node-RED editor is available at **http://localhost:1880**.
 

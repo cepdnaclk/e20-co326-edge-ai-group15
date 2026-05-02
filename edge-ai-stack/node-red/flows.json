@@ -23,7 +23,7 @@
     "order": 0,
     "width": 0,
     "height": 0,
-    "format": "<style>\n:root {\n  --dash-bg: linear-gradient(135deg, #f4f7fb 0%, #e8eef7 45%, #dde8f3 100%);\n  --card-bg: rgba(255, 255, 255, 0.88);\n  --card-border: rgba(15, 23, 42, 0.08);\n  --text-main: #0f172a;\n  --text-muted: #526071;\n  --accent: #0f766e;\n  --accent-soft: #dff7f4;\n  --danger: #c2410c;\n  --shadow: 0 18px 40px rgba(15, 23, 42, 0.10);\n}\n\nbody.nr-dashboard-theme,\nbody.nr-dashboard-theme md-content,\nbody.nr-dashboard-theme .nr-dashboard-template {\n  background: var(--dash-bg) !important;\n  color: var(--text-main);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-theme md-toolbar,\nbody.nr-dashboard-theme md-toolbar {\n  background: rgba(15, 23, 42, 0.88) !important;\n  color: #f8fafc !important;\n  backdrop-filter: blur(14px);\n  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.22);\n}\n\nbody.nr-dashboard-theme md-toolbar .md-toolbar-tools {\n  font-size: 20px;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardpanel {\n  background: var(--card-bg) !important;\n  border: 1px solid var(--card-border);\n  border-radius: 24px !important;\n  box-shadow: var(--shadow);\n  backdrop-filter: blur(16px);\n  overflow: hidden;\n  transition: transform 160ms ease, box-shadow 160ms ease;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardpanel:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.14);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardtitle {\n  padding: 18px 22px 8px !important;\n  font-size: 14px !important;\n  font-weight: 800 !important;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-muted) !important;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardcontainer {\n  padding: 6px 12px 14px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text,\nbody.nr-dashboard-theme .nr-dashboard-switch {\n  padding: 8px 14px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text .label,\nbody.nr-dashboard-theme .nr-dashboard-switch .label {\n  color: var(--text-muted) !important;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text p,\nbody.nr-dashboard-theme .nr-dashboard-text div,\nbody.nr-dashboard-theme .nr-dashboard-text span {\n  color: var(--text-main);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-chart-container,\nbody.nr-dashboard-theme svg {\n  border-radius: 18px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-gauge text {\n  font-weight: 700;\n}\n\nbody.nr-dashboard-theme .metrics-panel .nr-dashboard-cardpanel {\n  background: linear-gradient(180deg, rgba(255,255,255,0.93), rgba(236,248,247,0.92)) !important;\n}\n\nbody.nr-dashboard-theme .status-panel .nr-dashboard-cardpanel,\nbody.nr-dashboard-theme .prediction-panel .nr-dashboard-cardpanel,\nbody.nr-dashboard-theme .relay-panel .nr-dashboard-cardpanel {\n  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.95)) !important;\n}\n\nbody.nr-dashboard-theme .chart-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .gauge-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .status-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .confidence-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .prediction-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .motor-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .control-card .nr-dashboard-cardtitle::before {\n  content: \"\";\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  margin-right: 10px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #14b8a6, #0f766e);\n  box-shadow: 0 0 0 5px var(--accent-soft);\n}\n\nbody.nr-dashboard-theme .status-card .value,\nbody.nr-dashboard-theme .prediction-card .value,\nbody.nr-dashboard-theme .motor-card .value {\n  display: inline-block;\n  padding: 10px 14px;\n  border-radius: 16px;\n  background: rgba(255,255,255,0.72);\n  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);\n}\n\nbody.nr-dashboard-theme .control-card md-switch .md-thumb {\n  background-color: #f8fafc !important;\n}\n\nbody.nr-dashboard-theme .control-card md-switch.md-checked .md-bar {\n  background-color: rgba(15, 118, 110, 0.32) !important;\n}\n\nbody.nr-dashboard-theme .control-card md-switch.md-checked .md-thumb {\n  background: linear-gradient(135deg, #14b8a6, #0f766e) !important;\n}\n\nbody.nr-dashboard-theme .control-card .nr-dashboard-switch {\n  background: rgba(255,255,255,0.72);\n  border-radius: 18px;\n  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);\n}\n\n@media (max-width: 960px) {\n  body.nr-dashboard-theme .nr-dashboard-cardpanel {\n    border-radius: 18px !important;\n  }\n\n  body.nr-dashboard-theme .nr-dashboard-cardtitle {\n    padding: 16px 18px 8px !important;\n  }\n}\n</style>",
+    "format": "<style>\n:root {\n  --dash-bg: linear-gradient(135deg, #f4f7fb 0%, #e8eef7 45%, #dde8f3 100%);\n  --card-bg: rgba(255, 255, 255, 0.88);\n  --card-border: rgba(15, 23, 42, 0.08);\n  --text-main: #0f172a;\n  --text-muted: #526071;\n  --accent: #0f766e;\n  --accent-soft: #dff7f4;\n  --danger: #c2410c;\n  --shadow: 0 18px 40px rgba(15, 23, 42, 0.10);\n}\n\nbody.nr-dashboard-theme,\nbody.nr-dashboard-theme md-content,\nbody.nr-dashboard-theme .nr-dashboard-template {\n  background: var(--dash-bg) !important;\n  color: var(--text-main);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-theme md-toolbar,\nbody.nr-dashboard-theme md-toolbar {\n  background: rgba(15, 23, 42, 0.88) !important;\n  color: #f8fafc !important;\n  backdrop-filter: blur(14px);\n  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.22);\n}\n\nbody.nr-dashboard-theme md-toolbar .md-toolbar-tools {\n  font-size: 20px;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardpanel {\n  background: var(--card-bg) !important;\n  border: 1px solid var(--card-border);\n  border-radius: 24px !important;\n  box-shadow: var(--shadow);\n  backdrop-filter: blur(16px);\n  overflow: hidden;\n  transition: transform 160ms ease, box-shadow 160ms ease;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardpanel:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.14);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardtitle {\n  padding: 18px 22px 8px !important;\n  font-size: 14px !important;\n  font-weight: 800 !important;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-muted) !important;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-cardcontainer {\n  padding: 6px 12px 14px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text,\nbody.nr-dashboard-theme .nr-dashboard-switch,\nbody.nr-dashboard-theme .nr-dashboard-template {\n  padding: 8px 14px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text .label,\nbody.nr-dashboard-theme .nr-dashboard-switch .label {\n  color: var(--text-muted) !important;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-text p,\nbody.nr-dashboard-theme .nr-dashboard-text div,\nbody.nr-dashboard-theme .nr-dashboard-text span {\n  color: var(--text-main);\n}\n\nbody.nr-dashboard-theme .nr-dashboard-chart-container,\nbody.nr-dashboard-theme svg {\n  border-radius: 18px;\n}\n\nbody.nr-dashboard-theme .nr-dashboard-gauge text {\n  font-weight: 700;\n}\n\nbody.nr-dashboard-theme .metrics-panel .nr-dashboard-cardpanel {\n  background: linear-gradient(180deg, rgba(255,255,255,0.93), rgba(236,248,247,0.92)) !important;\n}\n\nbody.nr-dashboard-theme .status-panel .nr-dashboard-cardpanel,\nbody.nr-dashboard-theme .prediction-panel .nr-dashboard-cardpanel,\nbody.nr-dashboard-theme .relay-panel .nr-dashboard-cardpanel,\nbody.nr-dashboard-theme .history-panel .nr-dashboard-cardpanel {\n  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.95)) !important;\n}\n\nbody.nr-dashboard-theme .chart-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .gauge-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .status-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .confidence-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .prediction-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .motor-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .control-card .nr-dashboard-cardtitle::before,\nbody.nr-dashboard-theme .history-card .nr-dashboard-cardtitle::before {\n  content: \"\";\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  margin-right: 10px;\n  border-radius: 999px;\n  background: linear-gradient(135deg, #14b8a6, #0f766e);\n  box-shadow: 0 0 0 5px var(--accent-soft);\n}\n\nbody.nr-dashboard-theme .status-card .value,\nbody.nr-dashboard-theme .prediction-card .value,\nbody.nr-dashboard-theme .motor-card .value {\n  display: inline-block;\n  padding: 10px 14px;\n  border-radius: 16px;\n  background: rgba(255,255,255,0.72);\n  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);\n}\n\nbody.nr-dashboard-theme .control-card md-switch .md-thumb {\n  background-color: #f8fafc !important;\n}\n\nbody.nr-dashboard-theme .control-card md-switch.md-checked .md-bar {\n  background-color: rgba(15, 118, 110, 0.32) !important;\n}\n\nbody.nr-dashboard-theme .control-card md-switch.md-checked .md-thumb {\n  background: linear-gradient(135deg, #14b8a6, #0f766e) !important;\n}\n\nbody.nr-dashboard-theme .control-card .nr-dashboard-switch {\n  background: rgba(255,255,255,0.72);\n  border-radius: 18px;\n  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);\n}\n\nbody.nr-dashboard-theme .history-list {\n  display: grid;\n  gap: 10px;\n  min-height: 180px;\n}\n\nbody.nr-dashboard-theme .history-empty {\n  padding: 18px;\n  border-radius: 18px;\n  background: rgba(255,255,255,0.72);\n  color: var(--text-muted);\n  text-align: center;\n  font-weight: 600;\n}\n\nbody.nr-dashboard-theme .history-entry {\n  padding: 14px 16px;\n  border-radius: 18px;\n  background: rgba(255,255,255,0.78);\n  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);\n}\n\nbody.nr-dashboard-theme .history-entry--fault {\n  background: linear-gradient(180deg, rgba(254, 242, 242, 0.96), rgba(255, 237, 213, 0.96));\n  box-shadow: inset 0 0 0 1px rgba(194, 65, 12, 0.12);\n}\n\nbody.nr-dashboard-theme .history-entry--stopped {\n  background: linear-gradient(180deg, rgba(255, 251, 235, 0.96), rgba(255, 247, 237, 0.96));\n  box-shadow: inset 0 0 0 1px rgba(230, 166, 0, 0.16);\n}\n\nbody.nr-dashboard-theme .history-entry__top {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 6px;\n}\n\nbody.nr-dashboard-theme .history-entry__status {\n  font-size: 13px;\n  font-weight: 800;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n\nbody.nr-dashboard-theme .history-entry__time {\n  color: var(--text-muted);\n  font-size: 12px;\n  font-weight: 700;\n}\n\nbody.nr-dashboard-theme .history-entry__detail {\n  color: var(--text-main);\n  font-size: 13px;\n  line-height: 1.55;\n}\n\n@media (max-width: 960px) {\n  body.nr-dashboard-theme .nr-dashboard-cardpanel {\n    border-radius: 18px !important;\n  }\n\n  body.nr-dashboard-theme .nr-dashboard-cardtitle {\n    padding: 16px 18px 8px !important;\n  }\n\n  body.nr-dashboard-theme .history-entry__top {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n</style>",
     "storeOutMessages": false,
     "fwdInMessages": false,
     "resendOnRefresh": true,
@@ -78,6 +78,17 @@
     "width": "12",
     "collapse": false,
     "className": "relay-panel"
+  },
+  {
+    "id": "ui_group_history",
+    "type": "ui_group",
+    "name": "Recent History",
+    "tab": "ui_tab_motor_monitor",
+    "order": 5,
+    "disp": true,
+    "width": "12",
+    "collapse": false,
+    "className": "history-panel"
   },
 
   {
@@ -376,7 +387,8 @@
         "format_prediction_html",
         "format_live_status_html",
         "format_relay_html",
-        "sync_motor_toggle"
+        "sync_motor_toggle",
+        "build_history_panel"
       ]
     ]
   },
@@ -588,5 +600,45 @@
     "x": 860,
     "y": 420,
     "wires": []
+  },
+  {
+    "id": "build_history_panel",
+    "type": "function",
+    "z": "f1a2b3c4d5e6f701",
+    "name": "Build History Panel",
+    "func": "const status = String(msg.payload.status || 'NORMAL');\nconst motorState = String(msg.payload.motor_state || 'ON');\nconst vibration = Number(msg.payload.vibration || 0);\nconst confidence = Number(msg.payload.ai_confidence || 0) * 100;\nconst timestamp = new Date((msg.payload.timestamp || Date.now() / 1000) * 1000);\nconst timeLabel = timestamp.toLocaleTimeString([], { hour12: false });\nconst normalizedStatus = motorState === 'OFF' || status === 'MOTOR_OFF' ? 'MOTOR OFF' : status;\nconst lastState = context.get('lastState');\nconst shouldLog = normalizedStatus === 'FAULT' || normalizedStatus !== lastState;\n\nif (!shouldLog) {\n    return null;\n}\n\nconst entryType = normalizedStatus === 'FAULT'\n    ? 'history-entry--fault'\n    : normalizedStatus === 'MOTOR OFF'\n        ? 'history-entry--stopped'\n        : '';\nconst detail = normalizedStatus === 'FAULT'\n    ? 'Abnormal vibration at ' + vibration.toFixed(4) + ' g with AI confidence ' + confidence.toFixed(1) + '%.'\n    : normalizedStatus === 'MOTOR OFF'\n        ? 'Motor relay is OFF. Last reading was ' + vibration.toFixed(4) + ' g.'\n        : 'System returned to normal at ' + vibration.toFixed(4) + ' g.';\n\nconst history = context.get('history') || [];\nhistory.unshift('<div class=\"history-entry ' + entryType + '\"><div class=\"history-entry__top\"><span class=\"history-entry__status\">' + normalizedStatus + '</span><span class=\"history-entry__time\">' + timeLabel + '</span></div><div class=\"history-entry__detail\">' + detail + '</div></div>');\ncontext.set('history', history.slice(0, 8));\ncontext.set('lastState', normalizedStatus);\nmsg.payload = '<div class=\"history-list\">' + context.get('history').join('') + '</div>';\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 640,
+    "y": 580,
+    "wires": [
+      [
+        "ui_template_history_panel"
+      ]
+    ]
+  },
+  {
+    "id": "ui_template_history_panel",
+    "type": "ui_template",
+    "z": "f1a2b3c4d5e6f701",
+    "group": "ui_group_history",
+    "name": "History Panel",
+    "order": 1,
+    "width": "12",
+    "height": "8",
+    "format": "<div class=\"history-card\" ng-bind-html=\"msg.payload\"></div><div class=\"history-empty\" ng-if=\"!msg.payload\">Waiting for status updates...</div>",
+    "storeOutMessages": false,
+    "fwdInMessages": false,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "history-card",
+    "x": 860,
+    "y": 580,
+    "wires": [
+      []
+    ]
   }
 ]

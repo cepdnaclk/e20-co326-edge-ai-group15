@@ -1,60 +1,81 @@
-"""Vibration signal simulator for a motor condition-monitoring pipeline."""
+"""vibration signal simulator for motor condition monitoring."""
 
 import math
 import random
 import time
+from collections import deque
 from collections.abc import Callable, Generator
 
 
-def generate_vibration(fault: bool = False) -> float:
-    """Generate a single motor vibration reading in g-units.
+class MotorVibrationSimulator:
+    def __init__(self, base_freq: float = 10.0, sample_rate: float = 1.0):
+        self.base_freq = base_freq
+        self.sample_rate = sample_rate
+        self.t = 0.0
 
-    In normal mode, the signal approximates a healthy rotating machine with a
-    low-amplitude sinusoidal oscillation and small sensor noise.
+    def _normal_signal(self) -> float:
+        """Generate realistic normal vibration using harmonics + noise."""
+        # Fundamental + harmonics
+        A1 = random.uniform(0.15, 0.25)
+        A2 = A1 * 0.5
+        A3 = A1 * 0.3
 
-    In fault mode, the signal emulates bearing/imbalance events either as sharp
-    transient spikes or as high-energy irregular burst noise.
+        v = (
+            A1 * math.sin(2 * math.pi * self.base_freq * self.t)
+            + A2 * math.sin(2 * math.pi * 2 * self.base_freq * self.t)
+            + A3 * math.sin(2 * math.pi * 3 * self.base_freq * self.t)
+        )
 
-    Args:
-        fault: If True, generate fault-like vibration behavior.
+        # Gaussian noise
+        noise = random.gauss(0, 0.02)
 
-    Returns:
-        A single vibration reading in g.
-    """
-    if fault:
-        fault_mode = random.choice(["spike", "burst"])
-        if fault_mode == "spike":
-            # Abrupt impulse caused by impact/friction fault.
-            return round(random.uniform(0.8, 2.0), 4)
+        return abs(v + noise)
 
-        # Unstable resonance-like burst with large random energy.
-        burst_center = random.uniform(0.9, 1.4)
-        burst_noise = random.gauss(0, 0.25)
-        return round(max(0.8, min(2.0, burst_center + burst_noise)), 4)
+    def _fault_signal(self, base_value: float) -> float:
+        """Apply fault patterns to base signal."""
+        fault_type = random.choice(["spike", "burst", "imbalance", "drift"])
 
-    # Baseline periodic vibration from rotating shaft dynamics
-    now = time.time()
-    simulated_frequency_hz = 10.0
-    phase = 2 * math.pi * simulated_frequency_hz * now
-    amplitude = random.uniform(0.1, 0.3)
-    baseline = amplitude * abs(math.sin(phase))
+        if fault_type == "spike":
+            # Sudden impulse
+            return base_value + random.uniform(1.0, 2.5)
 
-    # Sensor/environment noise around the nominal periodic signal
-    noise = random.gauss(0, 0.02)
-    reading = baseline + noise
-    return round(max(0.0, reading), 4)
+        elif fault_type == "burst":
+            # Short high-energy noise
+            return abs(random.gauss(1.5, 0.3))
+
+        elif fault_type == "imbalance":
+            # Amplitude modulation
+            mod = 1 + 0.5 * math.sin(2 * math.pi * 1 * self.t)
+            return abs(base_value * mod)
+
+        elif fault_type == "drift":
+            # Gradual increase
+            drift_factor = 1 + 0.001 * self.t
+            return abs(base_value * drift_factor)
+
+        return base_value
+
+    def generate(self, fault: bool = False) -> float:
+        """Generate a single vibration reading."""
+        base = self._normal_signal()
+
+        if fault:
+            value = self._fault_signal(base)
+        else:
+            value = base
+
+        # Advance time
+        self.t += 1.0 / self.sample_rate
+
+        return round(max(0.0, min(3.0, value)), 4)
 
 
 def simulate_stream(
     motor_running_fn: Callable[[], bool] | None = None,
 ) -> Generator[tuple[float, bool], None, None]:
-    """Yield an infinite stream of (vibration, is_fault) tuples at 1-second intervals.
+    """Yield continuous (vibration, is_fault) stream."""
+    simulator = MotorVibrationSimulator()
 
-    Each tuple contains the vibration reading and a boolean indicating whether
-    the reading was generated under fault conditions (ground truth label).
-
-    Faults are randomly injected with approximately 15% probability.
-    """
     while True:
         if motor_running_fn is not None and not motor_running_fn():
             yield (0.0, False)
@@ -62,6 +83,7 @@ def simulate_stream(
             continue
 
         is_fault = random.random() < 0.15
-        vibration = generate_vibration(fault=is_fault)
+        vibration = simulator.generate(fault=is_fault)
+
         yield (vibration, is_fault)
         time.sleep(1)
